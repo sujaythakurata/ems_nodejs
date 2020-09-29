@@ -1,0 +1,36 @@
+body{
+	background-color: white;
+}
+.card-info{
+	.card-body{
+		height: 30vh;
+		position:relative;
+	}
+}
+
+.content{
+	border:solid white;
+	height: 100%;
+}
+
+.n-current{
+	position: absolute;
+	top:70%;
+	left:0%;
+	font-size: 1.5em;
+	font-weight: bolder;
+	width:100%;
+	text-align: center;
+	color:#4d79ff;
+}
+.f{
+	position: absolute;
+	top:50%;
+	left:0%;
+	font-size: 1.5em;
+	font-weight: bolder;
+	width:100%;
+	text-align: center;
+	color:#ff4d4d;
+
+}

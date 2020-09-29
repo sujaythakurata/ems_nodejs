@@ -1,0 +1,24 @@
+.main-sidebar{
+	background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	.brand-text{
+		color:#fff;
+		font-weight: bolder;
+	}
+
+	.user-panel{
+		.info{ display: block;
+			text-align: center;
+			width:100%;
+			a{
+				color:#fff;
+				font-weight: bolder;
+				font-size: 1.5em;
+				text-align: center;
+
+			}
+		}
+	}
+}
