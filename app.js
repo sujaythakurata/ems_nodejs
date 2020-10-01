@@ -1,4 +1,5 @@
 //DB
+require('dotenv').config({path:'/home/sujaythakurata/Documents/EMS/BACKEND/.env'});
 const path = require('path');
 const db = require(path.join(process.env.PWD, 'modules/db/db_config.js'));
 const migrate = require(path.join(process.env.PWD, 'modules/db/migrate.js'));
@@ -14,7 +15,7 @@ global.call = require(path.join(process.env.PWD, 'modules/db/do_call.js'));
 
 //EXPRESS
 
-require('dotenv').config();
+
 const express = require('express');
 
 app = express();
