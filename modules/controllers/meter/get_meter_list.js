@@ -80,3 +80,14 @@ exports.handel = (req, res)=>{
 	});
 	
 }
+
+exports.meter_list = (req, res)=>{
+	let query = `SELECT M_NAME, M_ID FROM METER_LIST WHERE C_ID = '${req.client_id}'`;
+	global.call.make_call(query)
+	.then((data)=>{
+		res.json(data);
+	})
+	.catch((err)=>{
+		res.status(500).end();
+	})
+}

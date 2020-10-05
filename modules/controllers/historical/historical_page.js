@@ -68,7 +68,6 @@ function get_average(minute, m_id, month, field, table, req, res){
 	let quries = '';
 	for(let i = 0; i<field.length; i++){
 		let query = `
-		SET SQL_MODE="";
 		SELECT ROUND(AVG(${field[i]}), 2) AS ${field[i]}, FLOOR(UNIX_TIMESTAMP(INSERTDATETIME)/(${minute}*60)) AS TIME_, 
 		INSERTDATETIME AS TIME  FROM ${table} WHERE M='${m_id}' AND C_ID='${req.client_id}'
 		AND INSERTDATETIME >= '${start_date}' AND INSERTDATETIME<='${end_date}'
@@ -77,6 +76,8 @@ function get_average(minute, m_id, month, field, table, req, res){
 		quries += query;
 
 	}
+
+	quries = `SET SQL_MODE="";`+quries;
 
 	global.pool.getConnection((err, conn)=>{
 
@@ -89,8 +90,10 @@ function get_average(minute, m_id, month, field, table, req, res){
 			if(err){
 				global.logerr.log(err);
 				res.status(500).end();
-			}else
-			res.status(200).json(result);
+			}else{
+				result = result.slice(1);
+				res.status(200).json(result);
+			}
 		})
 	});
 }
@@ -105,9 +108,8 @@ function get_mode(minute, m_id, month, field, table, req, res) {
 	let quries = '';
 	for(let i = 0; i< field.length; i++){
 		let query = `
-		SET SQL_MODE="";
 		SELECT MAX(C) AS FREQUENCY, ${field[i]}, TIME AS TIME_, INSERTDATETIME AS TIME FROM 
-		(SELECT COUNT(${field[i]}) AS C, ${field[i]}, FLOOR(UNIX_TIMESTAMP(INSERTDATETIME)/(${minute}*60)) AS TIME, 
+		(SELECT group_concat(${field[i]}) as g, COUNT(${field[i]}) AS C, ${field[i]}, FLOOR(UNIX_TIMESTAMP(INSERTDATETIME)/(${minute}*60)) AS TIME, 
 		INSERTDATETIME  FROM ${table} 
 		WHERE M='${m_id}' AND C_ID='${req.client_id}'
 		AND INSERTDATETIME >= '${start_date}' AND INSERTDATETIME<='${end_date}'
@@ -115,6 +117,7 @@ function get_mode(minute, m_id, month, field, table, req, res) {
 		`;
 		quries += query;
 	}
+	quries = `SET SQL_MODE="";`+quries;
 	global.pool.getConnection((err, conn)=>{
 
 		if(err){
@@ -127,7 +130,10 @@ function get_mode(minute, m_id, month, field, table, req, res) {
 				global.logerr.log(err);
 				res.status(500).end();
 			}else
-			res.status(200).json(result);
+			{	
+				result = result.slice(1);
+				res.status(200).json(result);
+			}
 		})
 	});
 }
@@ -142,7 +148,6 @@ function get_median(minute, m_id, month,field, table, req, res) {
 	let quries = '';
 	for(let i = 0; i<field.length;i++){
 		let query = `
-			SET SQL_MODE="";
 			SELECT GROUP_CONCAT(${field[i]}) AS ${field[i]}, FLOOR(UNIX_TIMESTAMP(INSERTDATETIME)/(${minute}*60)) AS TIME_, 
 			INSERTDATETIME AS TIME  FROM ${table} WHERE M='${m_id}' AND C_ID='${req.client_id}'
 			AND INSERTDATETIME >= '${start_date}' AND INSERTDATETIME<='${end_date}'
@@ -150,7 +155,7 @@ function get_median(minute, m_id, month,field, table, req, res) {
 		`;
 		quries += query;
 	}
-	console.log(quries);
+	quries = `SET SQL_MODE="";`+quries;
 	global.pool.getConnection((err, conn)=>{
 
 		if(err){
@@ -165,6 +170,7 @@ function get_median(minute, m_id, month,field, table, req, res) {
 			}else{
 				let index = 0;
 				if(result){
+					result = result.slice(1);
 					for(let i = 0; i<result.length; i++){
 						if(result[i].length != undefined){
 							for(let j = 0; j<result[i].length; j++){
@@ -174,18 +180,19 @@ function get_median(minute, m_id, month,field, table, req, res) {
 								if(len % 2 == 0){
 									mid = Math.floor(len/2);
 									let mid_value = Math.floor((parseInt(arr[mid])+parseInt(arr[mid-1]))/2);
-									result[i][j]["mid"]= mid_value;
+									result[i][j][field[i]]= mid_value;
 
 								}else{
 									mid = Math.floor(len/2);
 									let mid_value = arr[mid];
-									result[i][j]["mid"]= mid_value;
+									result[i][j][field[i]]= mid_value;
 								}
 							}
 							index += 1;
 						}
 					}
 				}
+				
 				res.status(200).json(result);
 			}
 			

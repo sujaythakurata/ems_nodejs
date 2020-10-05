@@ -150,7 +150,7 @@ function start_service(){
 				return update_kwh_daily(conn, data);
 			})
 			.then((data)=>{
-				kwh_daily_log.log(data);
+				//kwh_daily_log.log(data);
 				conn.release();
 			})
 			.catch((err)=>{

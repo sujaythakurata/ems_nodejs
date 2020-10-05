@@ -8,6 +8,40 @@ app.controller('meter_ctrl', ['$scope', '$compile', function($scope, $compile){
 	$scope.view = true;
 	//empty screen
 	$scope.empty_screen = false;
+	$scope.m_id = undefined;
+	$scope.meter_list = [];
+	
+
+	//urls
+	$scope.live_url = `/live?meter_id=${$scope.m_id}`;
+	$scope.historical_url = `/historical?meter_id=${$scope.m_id}`;
+	$scope.analysis_url = `/analysis?meter_id=${$scope.m_id}`;
+	$scope.utilization_url = `/utilization`;
+
+	//fetch meter list
+	$scope.getmetelist = ()=>{
+		let url = `${api_url('meter/meter_onlylist')}`;
+		get(url, false)
+		.then((data)=>{
+				$scope.meter_list = data;
+				if(data.length>0)
+					$scope.m_id = $scope.meter_list[0].M_ID;
+				else
+					$scope.m_id = 'null';
+				$scope.live_url = `/live?meter_id=${$scope.m_id}`;
+				$scope.historical_url = `/historical?meter_id=${$scope.m_id}`;
+				$scope.analysis_url = `/analysis?meter_id=${$scope.m_id}`;
+				$scope.utilization_url = `/utilization`;
+				$scope.$apply();
+			
+		})
+		.catch((err)=>{
+			handel_430(err)
+			s_alert('error', 'error', 'Unable to Fetch Meter list \n Please refresh again');
+		})
+	}
+
+	$scope.getmetelist();
 
 	//always set the grid view
 	$("input[data-bootstrap-switch]").each(function(){
@@ -15,8 +49,9 @@ app.controller('meter_ctrl', ['$scope', '$compile', function($scope, $compile){
     });
 
 	///general info
-	$scope.title = 'meters';
+	$scope.title = 'Meters';
 	let user_info = JSON.parse(localStorage.getItem('user_cred'));
+	$scope.name = user_info['user_name'];
 
 	//meter form initial value
 	$scope.currency = "usd";
@@ -49,6 +84,7 @@ app.controller('meter_ctrl', ['$scope', '$compile', function($scope, $compile){
 			})
 			.catch((err)=>{
 				hideloader();
+				handel_430(err)
 				if(err.status==409){
 					toast('warning', 'Meter ID already exists');
 				}
@@ -183,6 +219,7 @@ app.controller('meter_ctrl', ['$scope', '$compile', function($scope, $compile){
 			setTimeout(()=>{$scope.get_meterlist();}, delay);
 		})
 		.catch((err)=>{
+			handel_430(err)
 			s_alert('error', 'error', 'Internal Server error\n reconnect after 15s');
 			setTimeout(()=>{$scope.get_meterlist();}, error_delay);
 		})
@@ -238,6 +275,7 @@ app.controller('meter_ctrl', ['$scope', '$compile', function($scope, $compile){
 			$scope.$apply();
 		})
 		.catch((err)=>{
+			handel_430(err)
 			s_alert('error', 'error', 'Internal Server error\n Unable to fetch Data');
 		})
 	}
@@ -264,6 +302,7 @@ app.controller('meter_ctrl', ['$scope', '$compile', function($scope, $compile){
 			})
 			.catch((err)=>{
 				hideloader();
+				handel_430(err)
 				if(err.status==500){
 					toast('error', 'Internal error check your connection or try after a refresh');
 				}

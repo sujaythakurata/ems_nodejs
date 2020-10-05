@@ -1,0 +1,45 @@
+
+.card-info .card-body {
+  height: 32vh;
+  position: relative;
+}
+
+.content {
+  height: 100%;
+}
+
+.n-current {
+  position: absolute;
+  top: 70%;
+  left: 0%;
+  font-size: 1.5em;
+  font-weight: bolder;
+  width: 100%;
+  text-align: center;
+  color: #4d79ff;
+}
+
+.f {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  font-size: 1.5em;
+  font-weight: bolder;
+  width: 100%;
+  text-align: center;
+  color: #ff4d4d;
+}
+
+
+.m-status{
+  position: absolute;
+  width:100%;
+  text-align: center;
+  font-size: 1.5em;
+  color:#000;
+  text-transform: capitalize;
+  font-weight: normal;
+  top:50%;
+}
+
+/*# sourceMappingURL=live.css.map */

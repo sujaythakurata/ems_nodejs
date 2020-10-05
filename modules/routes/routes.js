@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path'); 
 require('dotenv').config();
 
 exports.route = function(app, express){
@@ -73,6 +73,7 @@ exports.apis = function(app){
 	app.post('/api/meter/add_meter',global.auth.auth, add_meter.handel);
 	app.put('/api/meter/meter_config', global.auth.auth, meter_config.handel);
 	app.get('/api/meter/meter_list', global.auth.auth, get_meter_list.handel);
+	app.get('/api/meter/meter_onlylist', global.auth.auth, get_meter_list.meter_list);
 	app.get('/api/meterconfig/:meter_id', global.auth.auth, meter_config.get);
 
 	//meter live analysis

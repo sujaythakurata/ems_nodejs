@@ -38,45 +38,11 @@ const plugins = {
 		datasets:[
 			{	
 				data:[],
-				label:'Active Power',
-				fill:false,
+				label:'Kwh',
 				borderColor:'#9999ff',
 				backgroundColor:'#9999ff',
 				borderCapStyle:"round",
-				borderWidth:2,
-				lineTension:0,
-				radius:1.5,
-				bezierCurve : false,
-				pointHitRadius:5,
-				hoverRadius:5,
-			},
-			{
-				data:[],
-				label:'Reactive Power',
-				fill:false,
-				borderColor:'#66ccff',
-				borderWidth:2,
-				lineTension:0,
-				backgroundColor:'#66ccff',
-				radius:1.5,
-				bezierCurve : false,
-				pointHitRadius:5,
-				hoverRadius:5,
-
-			},
-			{
-				data:[],
-				label:'Apparent Power',
-				fill:false,
-				borderColor:'#ff9933',
-				backgroundColor:'#ff9933',
-				borderWidth:2,
-				lineTension:0,
-				radius:1.5,
-				bezierCurve : false,
-				pointHitRadius:5,
-				hoverRadius:5,
-
+				borderWidth:0,
 			},
 
 		],
@@ -87,7 +53,7 @@ const plugins = {
 	const s_c1_opt = {
 		maintainAspectRatio:false,
 		legend:{
-			display:true
+			display:false
 		},
 		tooltips:{
 			mode:'index',
@@ -140,32 +106,24 @@ const plugins = {
 				stepSize:20,
 				autoSkip:true,
 				sampleSize:10,
-				maxTicksLimit: 20,
+				maxTicksLimit: 12,
+				beginAtZero:true
 
 
 			},
 			gridLines:{
 				drawTicks:false,
-				offsetGridLines:true,
-				zeroLineColor:"#000000",
-				zeroLineWidth:10,
-				color:'#f2f2f2',
-				lineWidth:1.5
+				drawOnChartArea:true,
+				color:'#f0f5f5',
+				zeroLineColor:"#002633",
+				zeroLineWidth:1,
+				
 			}
 			}],
 			xAxes:[{
-				type:'time',
-				time:{
-					unit:'second',
-					minUnit:'minute',
-     				parser:function(val1, val2, val3){
-     					return new Date(val1);
-     				},
-     				tooltipFormat:'MMMM Do YYYY, h:mm:ss a'
-				},
 				scaleLabel:{
 					display:true,
-					labelString:"Time",
+					labelString:"Date",
 					padding:0,
 					fontColor:'#000000',
 					fontStyle:'bold',
@@ -180,19 +138,14 @@ const plugins = {
 					stepSize:100,
 					fontSize:10,
 					bound:'data',
-					//source:'data'
 					autoSkip:true,
 					sampleSize:10,
-					maxTicksLimit: 20
-     				//min:new Date(),
-     				//min:moment(new Date()).subtract(60, 'minutes').format('YYYY-MM-DD HH:mm:ss'), 
-     				
+					maxTicksLimit: 31
 				},
 				gridLines:{
 					drawTicks:false,
-					offsetGridLines:true,
 					drawOnChartArea:false,
-					color:'#000000'
+					color:'#000000',
 				}
 			}]
 		},
@@ -208,171 +161,149 @@ const plugins = {
 
 	//s_c1 chart
 	const s_c1 = new Chart(s_c1_ctx, {
-		type:'line',
+		type:'bar',
 		data:s_c1_dataset,
 		options: s_c1_opt,
 
 	});
 
 	//s_c2
-	const s_c2_ctx = document.getElementById('s-c2');
-	const s_c2_opts = {
-  		angle: 0, // The span of the gauge arc
-  		lineWidth: 0.3, // The line thickness
- 		radiusScale: 1, // Relative radius
-	  	pointer: {
-		    length: 0.6, // // Relative to gauge radius
-		    strokeWidth: 0.035, // The thickness
-		    color: '#386dcf' // Fill color
-	  	},
-	  	renderTicks: {
-          divisions: 10,
-          divWidth: 1.1,
-          divLength: 0.7,
-          divColor: '#000',
-          subDivisions: 5,
-          subLength: 0.5,
-          subWidth: 0.6,
-          subColor: '#666666'
-        },
-	  	limitMax: true,     // If false, max value increases automatically if value > maxValue
-	  	limitMin: true,     // If true, the min value of the gauge will be fixed
-  		colorStart: '#6FADCF',   // Colors
-  		colorStop: '#8FC0DA',    // just experiment with them
-  		strokeColor: '#E0E0E0',  // to see which ones work best for you
-  		generateGradient: true,
-  		highDpiSupport: true,     // High resolution support
-  		percentColors : [[0.0, "#a9d70b" ], [0.50, "#f9c802"], [1.0, "#ff0000"]],
-  		staticLabels: {
-		  font: "10px sans-serif",  // Specifies font
-		  labels: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],  // Print labels at these values
-		  color: "#1b1c1c",  // Optional: Label text color
-		  fractionDigits: 0  // Optional: Numerical precision. 0=round off.
-		},
-	};
+	const s_c2_ctx = document.getElementById('s-c2').getContext('2d');
 
-// your canvas element
-	const s_c2 = new Gauge(s_c2_ctx).setOptions(s_c2_opts); // create sexy gauge!
-	s_c2.maxValue = 100; // set max gauge value
-	s_c2.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-	s_c2.animationSpeed = 32; // set animation speed (32 is default value)
+	//s_c2_dataset
+	const s_c2_dataset = {
+		labels:[],
+		datasets:[
+			{	
+				data:[],
+				label:'Kwh',
+				borderColor:'#9999ff',
+				backgroundColor:'#9999ff',
+				borderCapStyle:"round",
+				borderWidth:0,
+			},
 
-
-	// //s_c2_dataset
-	// const s_c2_dataset = {
-	// 	labels:['Neural Currrent'],
-	// 	datasets:[
-	// 		{	
-	// 			data:[20, 80],
-	// 			borderColor:' #b3c6ff',
-	// 			backgroundColor:['#4d79ff', "#b3c6ff"],
-	// 			borderCapStyle:"round",
-	// 			borderWidth:0,
-	// 			radius:1.5,
-	// 			borderCapStyle:'round',
-	// 			weight:5
-	// 		}
-
-	// 	],
-
-	// };
-
-	// //s_c2_opt
-	// const s_c2_opt = {
-	// 	maintainAspectRatio:false,
-	// 	circumference:Math.PI,
-	// 	rotation:Math.PI,
-	// 	legend:{
-	// 		display:true
-	// 	},
-	// 	tooltips:{
-	// 		enabled:false
-	// 	}
-
-	// };
-
-	// //s_c2 chart
-	// const s_c2 = new Chart(s_c2_ctx, {
-	// 	type:'doughnut',
-	// 	data:s_c2_dataset,
-	// 	options: s_c2_opt
-	// });
-
-	//s_c3
-	const s_c3_ctx = document.getElementById('s-c3')//.getContext('2d');
-
-	const s_c3_opts = {
-  		angle: 0, // The span of the gauge arc
-  		lineWidth: 0.1, // The line thickness
- 		radiusScale: 1, // Relative radius
-	  	pointer: {
-		    length: 0.6, // // Relative to gauge radius
-		    strokeWidth: 0.035, // The thickness
-		    color: '#ff4d4d' // Fill color
-	  	},
-	  	limitMax: false,     // If false, max value increases automatically if value > maxValue
-	  	limitMin: false,     // If true, the min value of the gauge will be fixed
-  		colorStart: '#6FADCF',   // Colors
-  		colorStop: '#8FC0DA',    // just experiment with them
-  		strokeColor: '#E0E0E0',  // to see which ones work best for you
-  		generateGradient: true,
-  		highDpiSupport: true,     // High resolution support
-  		staticLabels: {
-		  font: "10px sans-serif",  // Specifies font
-		  labels: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],  // Print labels at these values
-		  color: "#1b1c1c",  // Optional: Label text color
-		  fractionDigits: 0  // Optional: Numerical precision. 0=round off.
-		},
-		staticZones: [
-		   {strokeStyle: "#F03E3E", min: 0, max: 20}, // Red from 100 to 130
-		   {strokeStyle: "#FFDD00", min: 20, max: 40}, // Yellow
-		   {strokeStyle: "#30B32D", min: 40, max: 60}, // Green
-		   {strokeStyle: "#FFDD00", min: 60, max: 80}, // Yellow
-		   {strokeStyle: "#F03E3E", min: 80, max: 100}  // Red
 		],
+
 	};
 
-	// your canvas element
-	const s_c3 = new Gauge(s_c3_ctx).setOptions(s_c3_opts); // create sexy gauge!
-	s_c3.maxValue = 100; // set max gauge value
-	s_c3.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-	s_c3.animationSpeed = 32; // set animation speed (32 is default value)
+	//s_c2_opt
+	const s_c2_opt = {
+		maintainAspectRatio:false,
+		legend:{
+			display:false
+		},
+		tooltips:{
+			mode:'index',
+			intersect:false,
+			callbacks:{
+				label:function(item, data){
+					var label = data.datasets[item.datasetIndex].label || '';
+					if (label) {
+                        label += ': ';
+                    }
+                    let v =  item.yLabel;
+					if(v<Math.pow(10, 6) && v>=1000){
+						v =  (v/1000).toFixed(2)+"KW";
+					}else if(v>=Math.pow(10, 6)){
+						v =  (v/Math.pow(10, 6)).toFixed(2)+"MW";
+					}else
+						v =  v+"W";
+					label += v;
+                    return label;
+				}
+			}
+		},
+		scales:{
+			yAxes:[{
+				scaleLabel:{
+				display:true,
+				labelString:"Power",
+				padding:0,
+				fontColor:'#000000',
+				fontStyle:'bold',
+				fontFamily:"Helvetica",
 
-	// //s_c3_dataset
-	// const s_c3_dataset = {
-	// 	labels:['Frequency'],
-	// 	datasets:[
-	// 		{	
-	// 			data:[30, 70],
-	// 			backgroundColor:['#ff4d4d', '#ffcccc'],
-	// 			borderCapStyle:"round",
-	// 			borderWidth:0,
-	// 			hoverBackgroundColor:undefined
-	// 		}
 
-	// 	],
+			},
+			ticks:{
+				callback:function(value, index, values){
+					let v  = parseFloat(value);
+					if(v<Math.pow(10, 6) && v>=1000){
+						return (v/1000).toFixed(2)+"KW";
+					}else if(v>=Math.pow(10, 6)){
+						return (v/Math.pow(10, 6)).toFixed(2)+"MW";
+					}else
+						return v+"W";
+				
+				},
+				padding:10,
+				fontColor:'#000000',
+				fontStyle:'normal',
+				fontFamily:"Helvetica",
+				stepSize:20,
+				autoSkip:true,
+				sampleSize:10,
+				maxTicksLimit: 12,
+				beginAtZero:true
 
-	// };
 
-	// //s_c3_opt
-	// const s_c3_opt = {
-	// 	maintainAspectRatio:false,
-	// 	cutoutPercentage:60,
-	// 	legend:{
-	// 		display:true
-	// 	},
-	// 	tooltips:{
-	// 		enabled:false
-	// 	}
+			},
+			gridLines:{
+				drawTicks:false,
+				drawOnChartArea:true,
+				color:'#f0f5f5',
+				zeroLineColor:"#002633",
+				zeroLineWidth:1,
+				
+			}
+			}],
+			xAxes:[{
+				scaleLabel:{
+					display:true,
+					labelString:"Date",
+					padding:0,
+					fontColor:'#000000',
+					fontStyle:'bold',
+					fontFamily:"Helvetica"
 
-	// };
+				},
+				ticks:{
+					padding:10,
+					fontColor:'#000000',
+					fontStyle:'normal',
+					fontFamily:"Helvetica",
+					stepSize:100,
+					fontSize:10,
+					bound:'data',
+					autoSkip:true,
+					sampleSize:10,
+					maxTicksLimit: 31
+				},
+				gridLines:{
+					drawTicks:false,
+					drawOnChartArea:false,
+					color:'#000000',
+				}
+			}]
+		},
+		animation: {
+            duration: 0 // general animation time
+        },
+        hover: {
+            animationDuration: 0 // duration of animations when hovering an item
+        },
+        responsiveAnimationDuration: 0, // animation duration after a resize
+        plugins:plugins
+	};
 
-	// //s_c3 chart
-	// const s_c3 = new Chart(s_c3_ctx, {
-	// 	type:'doughnut',
-	// 	data:s_c3_dataset,
-	// 	options: s_c3_opt
-	// });
+	//s_c2 chart
+	const s_c2 = new Chart(s_c2_ctx, {
+		type:'bar',
+		data:s_c2_dataset,
+		options: s_c2_opt,
+
+	});
 
 
 	//t_c1 ctx
@@ -384,46 +315,47 @@ const plugins = {
 			{	
 				data:[],
 				label:'Phase 1',
+				fill:'origin',
 				//fill:false,
 				borderColor:'#2e5cb8',
 				backgroundColor:'#d6e0f5',
 				borderCapStyle:"round",
 				borderWidth:2,
-				//lineTension:0,
+				lineTension:0,
 				radius:2,
 				pointHitRadius:5,
-				hoverRadius:5
-				//bezierCurve : false,
+				hoverRadius:5,
+				bezierCurve : false,
 			},
 			{
 				data:[],
 				label:'Phase 2',
-				//fill:false,
+				fill:'origin',
 				borderColor:'#0099cc',
 				backgroundColor:'#ccf2ff',
 				borderCapStyle:"round",
 				borderWidth:2,
-				//lineTension:0,
+				lineTension:0,
 				radius:2,
 				pointHitRadius:5,
-				hoverRadius:5
-				//bezierCurve : false,
+				hoverRadius:5,
+				bezierCurve : false,
 
 
 			},
 			{
 				data:[],
 				label:'Phase 3',
-				//fill:false,
+				fill:'origin',
 				borderColor:'#9933ff',
 				backgroundColor:'#d9b3ff',
 				borderCapStyle:"round",
 				borderWidth:2,
-				//lineTension:0,
+				lineTension:0,
 				radius:2,
 				pointHitRadius:5,
-				hoverRadius:5
-				//bezierCurve : false,
+				hoverRadius:5,
+				bezierCurve : false,
 
 			},
 
@@ -459,6 +391,7 @@ const plugins = {
 		},
 		scales:{
 			yAxes:[{
+				 stacked: true,
 				scaleLabel:{
 				display:true,
 				labelString:"Voltage, V",
@@ -499,7 +432,9 @@ const plugins = {
 				type:'time',
 				time:{
 					unit:'second',
-					minUnit:'minute',
+					displayFormats: {
+                        second: 'll-h:mm:ss a'
+                    },
      				parser:function(val1, val2, val3){
      					return new Date(val1);
      				},
@@ -524,12 +459,17 @@ const plugins = {
 					stepSize:10,
 					autoSkip:true,
 					sampleSize:10,
-					maxTicksLimit: 20,
+					maxTicksLimit: 10,
 					bound:'data',
-					fontSize:10
+					fontSize:9,
+					callback:function(value, index, values){
+						let l = value.split('-');
+						return l;
+					},
+					maxRotation:0
 				},
 				gridLines:{
-					drawTicks:false,
+					drawTicks:true,
 					offsetGridLines:true,
 					drawOnChartArea:false,
 					color:'#000000'
@@ -646,6 +586,7 @@ const plugins = {
 		},
 		scales:{
 			yAxes:[{
+				 stacked: true,
 				scaleLabel:{
 				display:true,
 				labelString:"Voltage, V",
@@ -686,7 +627,9 @@ const plugins = {
 				type:'time',
 				time:{
 					unit:'second',
-					minUnit:'minute',
+					displayFormats: {
+                        second: 'll-h:mm:ss a'
+                    },
      				parser:function(val1, val2, val3){
      					return new Date(val1);
      				},
@@ -711,12 +654,17 @@ const plugins = {
 					stepSize:10,
 					autoSkip:true,
 					sampleSize:10,
-					maxTicksLimit: 20,
+					maxTicksLimit: 10,
 					bound:'data',
-					fontSize:10
+					fontSize:9,
+					callback:function(value, index, values){
+						let l = value.split('-');
+						return l;
+					},
+					maxRotation:0
 				},
 				gridLines:{
-					drawTicks:false,
+					drawTicks:true,
 					offsetGridLines:true,
 					drawOnChartArea:false,
 					color:'#000000'
@@ -818,6 +766,7 @@ const plugins = {
 		},
 		scales:{
 			yAxes:[{
+				stacked:true,
 				scaleLabel:{
 				display:true,
 				labelString:"Current, A",
@@ -858,7 +807,9 @@ const plugins = {
 				type:'time',
 				time:{
 					unit:'second',
-					minUnit:'minute',
+					displayFormats:{
+						second:'ll-hh:mm:ss'
+					},
      				parser:function(val1, val2, val3){
      					return new Date(val1);
      				},
@@ -883,11 +834,16 @@ const plugins = {
 					stepSize:20,
 					autoSkip:true,
 					sampleSize:10,
-					maxTicksLimit: 20,
-					fontSize:10
+					maxTicksLimit: 10,
+					fontSize:9,
+					callback:function(value, index, values){
+						let l = value.split('-');
+						return l;
+					},
+					maxRotation:0
 				},
 				gridLines:{
-					drawTicks:false,
+					drawTicks:true,
 					offsetGridLines:true,
 					drawOnChartArea:false,
 					color:'#000000'
@@ -930,7 +886,7 @@ const plugins = {
 			{	
 				data:[],
 				label:'Current Harmonics',
-				fill:false,
+				fill:'origin',
 				borderColor:f_c2_gradiant_1,
 				backgroundColor:f_c2_gradiant_1,
 				borderCapStyle:"round",
@@ -942,7 +898,7 @@ const plugins = {
 			{
 				data:[],
 				label:'Voltage Harmonics',
-				fill:false,
+				fill:'origin',
 				borderColor:f_c2_gradiant_2,
 				borderWidth:2,
 				backgroundColor:f_c2_gradiant_2,
@@ -984,6 +940,7 @@ const plugins = {
 		},
 		scales:{
 			yAxes:[{
+				stacked:true,
 				scaleLabel:{
 				display:true,
 				labelString:"Frequency",
@@ -1010,7 +967,7 @@ const plugins = {
 				stepSize:20,
 				autoSkip:true,
 				sampleSize:10,
-				maxTicksLimit: 20,
+				maxTicksLimit: 12,
 				fontSize:10
 			},
 			gridLines:{
@@ -1025,7 +982,9 @@ const plugins = {
 				type:'time',
 				time:{
 					unit:'second',
-					minUnit:'minute',
+					displayFormats:{
+						second:'ll-hh:mm:ss'
+					},
      				parser:function(val1, val2, val3){
      					return new Date(val1);
      				},
@@ -1050,11 +1009,16 @@ const plugins = {
 					stepSize:20,
 					autoSkip:true,
 					sampleSize:10,
-					maxTicksLimit: 20,
-					fontSize:10
+					maxTicksLimit: 10,
+					fontSize:9,
+					callback:function(value, index, values){
+						let l = value.split('-');
+						return l;
+					},
+					maxRotation:0
 				},
 				gridLines:{
-					drawTicks:false,
+					drawTicks:true,
 					offsetGridLines:true,
 					drawOnChartArea:false,
 					color:'#000000'

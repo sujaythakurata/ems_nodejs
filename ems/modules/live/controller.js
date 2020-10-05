@@ -8,6 +8,7 @@ app.controller('main_ctrl', ['$scope', function($scope){
 
 	///parameters
 	$scope.m_id = get_params('meter_id');
+
 	$scope.title = `${$scope.m_id} Live Page`;
 	let user_info = JSON.parse(localStorage.getItem('user_cred'));
 	$scope.name = user_info['user_name'];
@@ -17,6 +18,21 @@ app.controller('main_ctrl', ['$scope', function($scope){
 	$scope.historical_url = `/historical?meter_id=${$scope.m_id}`;
 	$scope.analysis_url = `/analysis?meter_id=${$scope.m_id}`;
 	$scope.utilization_url = `/utilization?meter_id=${$scope.m_id}`;
+	//fetch meter list
+	$scope.meter_list = [];
+
+	$scope.getmetelist = ()=>{
+		let url = `${api_url('meter/meter_onlylist')}`;
+		get(url, false)
+		.then((data)=>{
+			$scope.meter_list = data;
+		})
+		.catch((err)=>{
+			s_alert('error', 'error', 'Unable to Fetch Meter list \n Please refresh again');
+		})
+	}
+
+	$scope.getmetelist();
 
 	//delay
 	const error_delay = 15000;
@@ -30,6 +46,8 @@ app.controller('main_ctrl', ['$scope', function($scope){
 	$scope.second_row.c1_load = false;
 	$scope.second_row_c1_delay = 3000;
 	$scope.second_row.c1_no_data = false;
+	$scope.second_row.c2_no_data = false;
+	$scope.second_row.c3_no_data = false;
 
 	//third row params
 	$scope.third_row = {};
@@ -53,7 +71,7 @@ app.controller('main_ctrl', ['$scope', function($scope){
 	$scope.fourth_row.c2_no_data = false;
 
 	//delay params
-	const energyinfo_delay = 10000;
+	const energyinfo_delay = 3000;
 
 	//energyinfo function
 	$scope.energyinfo = ()=>{
@@ -68,18 +86,31 @@ app.controller('main_ctrl', ['$scope', function($scope){
 			$scope.first_row.monthly_avg = data[2][0].MONTHLY_AVG==undefined?"Nan":data[2][0].MONTHLY_AVG;
 			$scope.first_row.total_monthly_consumption = data[3][0].TOTAL_MONTHLY_CONSUMPTION==undefined?"Nan":data[3][0].TOTAL_MONTHLY_CONSUMPTION;
 			$scope.first_row.power_factor = data[4][0].PF == undefined?"Nan":data[4][0].PF;
-			$scope.second_row.natural_current = data[5][0].I_N == undefined?"Nan":data[5][0].I_N;
-			$scope.second_row.f = data[5][0].Frequency == undefined?"Nan":data[5][0].Frequency;
-			s_c2.data.datasets[0].data[0] = $scope.second_row.natural_current;
-			s_c2.data.datasets[0].data[1] = 100-$scope.second_row.natural_current;
-			s_c3.data.datasets[0].data[0] = $scope.second_row.f;
-			s_c3.data.datasets[0].data[1] = 100-$scope.second_row.f;
-			s_c2.update();
-			s_c3.update();
+			if(data[5][0] != undefined)
+			{
+				$scope.second_row.c2_no_data = false;
+				$scope.second_row.c3_no_data = false
+				$scope.second_row.natural_current = data[5][0].I_N == undefined?"Nan":data[5][0].I_N;
+				$scope.second_row.f = data[5][0].Frequency == undefined?"Nan":data[5][0].Frequency;
+				s_c2.set($scope.second_row.natural_current);
+				//s_c2.data.datasets[0].data[0] = $scope.second_row.natural_current;
+				//s_c2.data.datasets[0].data[1] = 100-$scope.second_row.natural_current;
+				//s_c3.data.datasets[0].data[0] = $scope.second_row.f;
+				//s_c3.data.datasets[0].data[1] = 100-$scope.second_row.f;
+				//s_c2.update();
+				//s_c3.update();
+				s_c3.set($scope.second_row.f);
+			}else{
+				$scope.second_row.c2_no_data = true;
+				$scope.second_row.c3_no_data = true;
+			}
+			
 			$scope.$apply();
 			setTimeout(()=>{$scope.energyinfo()}, energyinfo_delay);
 		})
 		.catch((err)=>{
+			id_missing($scope.m_id);
+			handel_430(err);
 			s_alert('error', 'error', 'Internal Error Server stop working\n will be auto connect after 15s');
 			setTimeout(()=>{$scope.energyinfo()}, error_delay);
 		})
@@ -154,6 +185,8 @@ app.controller('main_ctrl', ['$scope', function($scope){
 			setTimeout(()=>{$scope.second_row_c1()}, $scope.second_row_c1_delay);
 		})
 		.catch((err)=>{
+			id_missing($scope.m_id);
+			handel_430(err);
 			s_alert('error', 'error', 'Internal Error Server stop working\n will be auto connect after 15s');
 			setTimeout(()=>{$scope.second_row_c1()}, error_delay);
 		})	
@@ -194,6 +227,8 @@ app.controller('main_ctrl', ['$scope', function($scope){
 			setTimeout(()=>{$scope.third_row_c1()}, $scope.third_row_c1_delay);
 		})
 		.catch((err)=>{
+			id_missing($scope.m_id);
+			handel_430(err);
 			s_alert('error', 'error', 'Internal Error Server stop working\n will be auto connect after 15s');
 			setTimeout(()=>{$scope.third_row_c1()}, error_delay);
 		})
@@ -271,6 +306,8 @@ app.controller('main_ctrl', ['$scope', function($scope){
 			setTimeout(()=>{$scope.fourth_row_c1()}, $scope.fourth_row_c1_delay);
 		})
 		.catch((err)=>{
+			id_missing($scope.m_id);
+			handel_430(err);
 			s_alert('error', 'error', 'Internal Error Server stop working\n will be auto connect after 15s');
 			setTimeout(()=>{$scope.fourth_row_c1()}, error_delay);
 		})
@@ -306,6 +343,8 @@ app.controller('main_ctrl', ['$scope', function($scope){
 			setTimeout(()=>{$scope.fourth_row_c2()}, $scope.fourth_row_c2_delay);
 		})
 		.catch((err)=>{
+			id_missing($scope.m_id);
+			handel_430(err);
 			s_alert('error', 'error', 'Internal Error Server stop working\n will be auto connect after 15s');
 			setTimeout(()=>{$scope.fourth_row_c2()}, error_delay);
 		})

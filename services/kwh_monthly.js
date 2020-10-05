@@ -122,7 +122,7 @@ function start_service(){
 				return update_kwh_monthly(conn, data);
 			})
 			.then((data)=>{
-				kwh_monthly_log.log(data);
+				//kwh_monthly_log.log(data);
 				conn.release();
 			})
 			.catch((err)=>{

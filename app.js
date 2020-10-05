@@ -1,5 +1,5 @@
 //DB
-require('dotenv').config({path:'/home/sujaythakurata/Documents/EMS/BACKEND/.env'});
+require('dotenv').config();
 const path = require('path');
 const db = require(path.join(process.env.PWD, 'modules/db/db_config.js'));
 const migrate = require(path.join(process.env.PWD, 'modules/db/migrate.js'));

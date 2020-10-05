@@ -118,7 +118,7 @@ function start_service(){
 				return update_kwh_yearly(conn, data);
 			})
 			.then((data)=>{
-				kwh_yearly_log.log(data);
+				//kwh_yearly_log.log(data);
 				conn.release();
 			})
 			.catch((err)=>{
